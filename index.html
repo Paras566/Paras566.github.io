@@ -1230,21 +1230,25 @@
             </a>
           </div>
         </div>
-        <div class="contact-form reveal">
+        <form class="contact-form reveal" id="contact-form">
+          <input type="hidden" name="access_key" value="ef3d2f78-eae7-49df-9862-b8d40c45c29d" />
+          <input type="hidden" name="subject" value="Portfolio Contact — Paras Mondela" />
+          <input type="hidden" name="from_name" value="Portfolio Site" />
           <div class="form-group">
             <label class="form-label" for="name">// your_name</label>
-            <input class="form-input" type="text" id="name" placeholder="Jane Smith" />
+            <input class="form-input" type="text" id="name" name="name" placeholder="Jane Smith" required />
           </div>
           <div class="form-group">
             <label class="form-label" for="email">// your_email</label>
-            <input class="form-input" type="email" id="email" placeholder="jane@company.com" />
+            <input class="form-input" type="email" id="email" name="email" placeholder="jane@company.com" required />
           </div>
           <div class="form-group">
             <label class="form-label" for="message">// message</label>
-            <textarea class="form-textarea" id="message" placeholder="Hi Paras, we'd love to chat about a role..."></textarea>
+            <textarea class="form-textarea" id="message" name="message" placeholder="Hi Paras, we'd love to chat about a role..." required></textarea>
           </div>
-          <button class="form-btn" onclick="handleContact()">send_message() →</button>
-        </div>
+          <button class="form-btn" type="submit" id="form-btn">send_message() →</button>
+          <div id="form-status" style="margin-top:1rem;font-family:var(--mono);font-size:0.8rem;display:none;padding:0.75rem 1rem;border-radius:8px;"></div>
+        </form>
       </div>
     </div>
   </section>
@@ -1298,16 +1302,42 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // ── Contact form mailto
-    function handleContact() {
-      const name    = document.getElementById('name').value.trim();
-      const email   = document.getElementById('email').value.trim();
-      const message = document.getElementById('message').value.trim();
-      if (!name || !email || !message) { alert('Please fill in all fields.'); return; }
-      const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
-      const body    = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
-      window.location.href = `mailto:parasmondela7@gmail.com?subject=${subject}&body=${body}`;
-    }
+    // ── Contact form — Web3Forms
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn    = document.getElementById('form-btn');
+      const status = document.getElementById('form-status');
+      btn.textContent = 'sending...';
+      btn.disabled = true;
+
+      const data = Object.fromEntries(new FormData(this));
+      try {
+        const res  = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (res.ok && json.success) {
+          status.style.display    = 'block';
+          status.style.background = 'rgba(63,185,80,0.1)';
+          status.style.border     = '1px solid rgba(63,185,80,0.4)';
+          status.style.color      = 'var(--green)';
+          status.textContent      = '✓ Message sent! I\'ll get back to you soon.';
+          this.reset();
+        } else {
+          throw new Error(json.message || 'Send failed');
+        }
+      } catch (err) {
+        status.style.display    = 'block';
+        status.style.background = 'rgba(248,81,73,0.1)';
+        status.style.border     = '1px solid rgba(248,81,73,0.4)';
+        status.style.color      = '#f85149';
+        status.textContent      = '✗ Something went wrong. Email me directly at parasmondela7@gmail.com';
+      }
+      btn.textContent = 'send_message() →';
+      btn.disabled    = false;
+    });
 
     // ── Active nav link on scroll
     const sections = document.querySelectorAll('section[id]');

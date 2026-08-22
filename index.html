@@ -1230,6 +1230,47 @@
       padding: 2rem;
     }
 
+    /* Magic Card spotlight - a radial glow follows the cursor, plus a
+       border-only ring highlight (masked so only the thin border edge is
+       colored, via mask-composite:exclude). Both track the same
+       JS-updated --mouse-x/--mouse-y custom properties. */
+    .magic-card {
+      position: relative;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+    }
+    .magic-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(200px circle at var(--mouse-x) var(--mouse-y), #58a6ff, #38bdf8, transparent 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .magic-card:hover::before { opacity: 1; }
+    .magic-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: inherit;
+      background: radial-gradient(200px circle at var(--mouse-x) var(--mouse-y), rgba(88,166,255,0.15), transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .magic-card:hover::after { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .magic-card::before, .magic-card::after { transition: none; }
+    }
+
     .form-group { margin-bottom: 1.25rem; }
 
     .form-label {
@@ -1852,7 +1893,7 @@
             </a>
           </div>
         </div>
-        <form class="contact-form reveal" id="contact-form">
+        <form class="contact-form magic-card reveal" id="contact-form">
           <input type="hidden" name="access_key" value="ef3d2f78-eae7-49df-9862-b8d40c45c29d" />
           <input type="hidden" name="subject" value="Portfolio Contact — Paras Mondela" />
           <input type="hidden" name="from_name" value="Portfolio Site" />
@@ -1947,6 +1988,16 @@
       });
     }, { threshold: 0.4 });
     document.querySelectorAll('.stat-number[data-count-to]').forEach(el => statObserver.observe(el));
+
+    // ── Magic Card spotlight — tracks the cursor position within each
+    // .magic-card so the CSS radial-gradient glow/border can follow it.
+    document.querySelectorAll('.magic-card').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
 
     // ── Project card starfields — random twinkling dots per card, with a
     // subtle pointer-parallax drift while hovered.

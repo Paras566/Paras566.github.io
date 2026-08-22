@@ -82,13 +82,39 @@
     .nav-links a:hover { color: var(--accent); }
 
     .nav-cta {
+      position: relative;
+      overflow: hidden;
       padding: 0.4rem 1rem;
       border: 1px solid var(--accent);
       border-radius: 6px;
       color: var(--accent) !important;
-      transition: background 0.2s !important;
+      transition: background 0.2s, transform 0.15s !important;
     }
     .nav-cta:hover { background: rgba(88,166,255,0.1) !important; }
+    .nav-cta:active { transform: scale(0.97); }
+
+    /* Shine effect - a soft diagonal highlight sweeps across the button on
+       a loop, pausing off-screen between passes. */
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+      transform: skewX(-20deg);
+      animation: navShine 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes navShine {
+      0%   { left: -60%; }
+      18%  { left: 130%; }
+      100% { left: 130%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nav-cta::before { animation: none; }
+    }
 
     .hamburger {
       display: none;

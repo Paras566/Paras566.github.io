@@ -20,9 +20,12 @@
   const FRAME_LEVEL_MAX = 44; // fullest horizontal turn, no upward tilt
   const FRAME_PEAK = 78;      // fullest horizontal turn + fullest upward tilt
 
-  const EASE_PER_SEC = 10;
-  const SENSITIVITY = 0.6;
-  const RESPONSE_CURVE = 0.6;
+  const EASE_PER_SEC = 6;
+  const RESPONSE_CURVE = 0.7;
+  // Full turn is reached once the cursor is this many pixels away from his
+  // face - a fixed distance, not a fraction of the viewport, so the effect
+  // feels the same regardless of screen size.
+  const RANGE_PX = 420;
 
   const pad5 = (n) => String(n).padStart(5, '0');
   const frameSrc = (n) => `${FRAME_DIR}/frame_${pad5(n)}.png`;
@@ -72,16 +75,26 @@
     return sign * Math.pow(Math.abs(v), RESPONSE_CURVE);
   }
 
+  // Gaze is measured from his actual face position on screen (not the
+  // viewport center) so "near him" really means "looking at you head-on",
+  // and turning only kicks in once the cursor moves away from him.
+  function getAnchor() {
+    const rect = heroImg.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width * 0.5,
+      y: rect.top + rect.height * 0.22,
+    };
+  }
+
   function updateTargets() {
     if (!pointerActive) {
       targetH = 0;
       targetV = 0;
       return;
     }
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const nx = cx > 0 ? (rawX - cx) / (cx * SENSITIVITY) : 0;
-    const ny = cy > 0 ? (cy - rawY) / (cy * SENSITIVITY) : 0;
+    const anchor = getAnchor();
+    const nx = (rawX - anchor.x) / RANGE_PX;
+    const ny = (anchor.y - rawY) / RANGE_PX;
     targetH = shapeResponse(Math.max(-1, Math.min(1, nx)));
     targetV = shapeResponse(Math.max(0, Math.min(1, ny)));
   }

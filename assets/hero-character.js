@@ -9,7 +9,7 @@
   // any src so narrow viewports never fetch a single frame. (The <img> has
   // no src in the HTML itself for the same reason - display:none does not
   // stop an eager `src` from being requested.)
-  if (!window.matchMedia('(min-width: 900px)').matches) return;
+  if (!window.matchMedia('(min-width: 1000px)').matches) return;
 
   heroImg.src = heroImg.dataset.src;
 

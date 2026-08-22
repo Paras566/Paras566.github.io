@@ -116,6 +116,10 @@
       padding: 80px 2rem 4rem;
       position: relative;
       overflow: hidden;
+      /* Pure black (not var(--bg)) so the character frames - which are shot
+         on a solid black background - blend into the section with no
+         visible seam around the art. */
+      background: #000000;
     }
 
     #hero::before {
@@ -135,50 +139,50 @@
       pointer-events: none;
     }
 
-    .hero-grid {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr;
-      align-items: center;
-      gap: 2rem;
-    }
-
     .hero-inner {
+      position: relative;
+      z-index: 2;
       max-width: 900px;
       margin: 0 auto;
     }
 
-    /* Interactive character panel - hidden below the breakpoint so mobile
-       visitors never even fetch the frame set. */
+    /* Character sits behind the intro text as a full-bleed background layer
+       - hidden below the breakpoint so mobile visitors never even fetch the
+       frame set. */
     .hero-character {
       display: none;
-      position: relative;
-      height: min(56vh, 460px);
-      background: #000000;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
       opacity: 0;
-      animation: fadeIn 0.8s 1.2s forwards;
+      animation: fadeIn 1s 1.2s forwards;
     }
 
     .hero-character__img {
       position: absolute;
       bottom: 0;
-      left: 50%;
+      left: 76%;
       height: 100%;
       width: auto;
       transform: translateX(-50%);
       user-select: none;
-      pointer-events: none;
     }
 
-    @media (min-width: 900px) {
-      .hero-grid { grid-template-columns: 1.05fr 0.95fr; }
-      .hero-inner { max-width: 640px; margin: 0; }
+    /* Darkens the art where it would sit directly behind the text column,
+       so the bio/tags/buttons stay legible against it. */
+    .hero-scrim {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(90deg, #000000 0%, #000000 42%, rgba(0,0,0,0.55) 58%, transparent 82%);
+    }
+
+    @media (min-width: 1000px) {
       .hero-character { display: block; }
+      .hero-scrim { display: block; }
     }
 
     .hero-greeting {
@@ -880,32 +884,31 @@
 
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-grid">
-      <div class="hero-inner">
-        <p class="hero-greeting">// hello, world — I'm</p>
-        <h1 class="hero-name">Paras Mondela</h1>
-        <p class="hero-title" id="typed-title"><span id="typed"></span><span class="cursor"></span></p>
-        <p class="hero-bio">
-          MSc Advanced Computer Science graduate from the University of Sussex. I build full-stack web applications, data-driven tools, and interactive experiences — using Python, React, Django, and Unity. Full Right to Work in the UK. Actively seeking my first professional role.
-        </p>
-        <div class="hero-tags">
-          <span class="tag accent">🇬🇧 Brighton, UK</span>
-          <span class="tag green">Open to Work</span>
-          <span class="tag">Python</span>
-          <span class="tag">React</span>
-          <span class="tag">Django</span>
-          <span class="tag">AWS</span>
-          <span class="tag">Unity</span>
-        </div>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#projects">View Projects</a>
-          <a class="btn btn-outline" href="https://github.com/Paras566" target="_blank" rel="noopener">GitHub ↗</a>
-          <a class="btn btn-outline" href="https://www.linkedin.com/in/parasmondela" target="_blank" rel="noopener">LinkedIn ↗</a>
-          <a class="btn btn-outline" href="mailto:parasmondela7@gmail.com">Email Me</a>
-        </div>
+    <div class="hero-character" aria-hidden="true">
+      <img id="hero-character-frame" class="hero-character__img" data-src="assets/hero-frames/frame_00001.png" alt="" draggable="false" />
+    </div>
+    <div class="hero-scrim"></div>
+    <div class="hero-inner">
+      <p class="hero-greeting">// hello, world — I'm</p>
+      <h1 class="hero-name">Paras Mondela</h1>
+      <p class="hero-title" id="typed-title"><span id="typed"></span><span class="cursor"></span></p>
+      <p class="hero-bio">
+        MSc Advanced Computer Science graduate from the University of Sussex. I build full-stack web applications, data-driven tools, and interactive experiences — using Python, React, Django, and Unity. Full Right to Work in the UK. Actively seeking my first professional role.
+      </p>
+      <div class="hero-tags">
+        <span class="tag accent">🇬🇧 Brighton, UK</span>
+        <span class="tag green">Open to Work</span>
+        <span class="tag">Python</span>
+        <span class="tag">React</span>
+        <span class="tag">Django</span>
+        <span class="tag">AWS</span>
+        <span class="tag">Unity</span>
       </div>
-      <div class="hero-character" aria-hidden="true">
-        <img id="hero-character-frame" class="hero-character__img" data-src="assets/hero-frames/frame_00001.png" alt="" draggable="false" />
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects">View Projects</a>
+        <a class="btn btn-outline" href="https://github.com/Paras566" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn btn-outline" href="https://www.linkedin.com/in/parasmondela" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn btn-outline" href="mailto:parasmondela7@gmail.com">Email Me</a>
       </div>
     </div>
     <div class="scroll-indicator">

@@ -541,7 +541,15 @@
     }
 
     /* ── SKILLS ── */
-    #skills { background: var(--bg); }
+    #skills {
+      position: relative;
+      overflow: hidden;
+      background: #000000;
+    }
+    #skills .container {
+      position: relative;
+      z-index: 1;
+    }
 
     .skills-grid {
       display: grid;
@@ -608,7 +616,7 @@
     }
 
     .project-card {
-      background: var(--bg);
+      background: #000000;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.75rem;
@@ -617,6 +625,36 @@
       transition: all 0.25s;
       position: relative;
       overflow: hidden;
+    }
+    /* Raises every direct child above the card's own rays layer (position:0
+       relative content always sits below a positioned sibling regardless of
+       z-index, so this needs to be explicit - same issue solved elsewhere
+       with a .container wrapper, but there's no single wrapper here). */
+    .project-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    /* Scoped as .project-card > .card-rays (not just .card-rays) so this
+       deterministically wins over the .project-card > * rule above rather
+       than depending on source order for an equal-specificity tie-break. */
+    .project-card > .card-rays {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .card-rays .ray--a {
+      left: -18%;
+      width: 80px;
+      background: linear-gradient(180deg, rgba(168,85,247,0.5) 0%, rgba(168,85,247,0.14) 55%, transparent 85%);
+      animation: rayDriftA 16s ease-in-out infinite;
+    }
+    .card-rays .ray--b {
+      left: 70%;
+      width: 80px;
+      background: linear-gradient(180deg, rgba(45,212,191,0.5) 0%, rgba(45,212,191,0.14) 55%, transparent 85%);
+      animation: rayDriftB 19s ease-in-out infinite -6s;
     }
     .project-card::before {
       content: '';
@@ -1208,6 +1246,12 @@
 
   <!-- SKILLS -->
   <section id="skills">
+    <div class="aurora-rays" aria-hidden="true">
+      <span class="ray ray--1"></span>
+      <span class="ray ray--2"></span>
+      <span class="ray ray--3"></span>
+      <span class="ray ray--4"></span>
+    </div>
     <div class="container">
       <p class="section-label reveal">02 // skills</p>
       <h2 class="section-title reveal">Tech Stack</h2>
@@ -1284,6 +1328,10 @@
       <div class="projects-grid">
 
         <div class="project-card reveal">
+          <div class="card-rays" aria-hidden="true">
+            <span class="ray ray--a"></span>
+            <span class="ray ray--b"></span>
+          </div>
           <div class="project-icon">💳</div>
           <div class="project-header">
             <h3 class="project-name">Online Payment Service</h3>
@@ -1307,6 +1355,10 @@
         </div>
 
         <div class="project-card reveal">
+          <div class="card-rays" aria-hidden="true">
+            <span class="ray ray--a"></span>
+            <span class="ray ray--b"></span>
+          </div>
           <div class="project-icon">🌱</div>
           <div class="project-header">
             <h3 class="project-name">Carbon Floor App</h3>
@@ -1329,6 +1381,10 @@
         </div>
 
         <div class="project-card reveal">
+          <div class="card-rays" aria-hidden="true">
+            <span class="ray ray--a"></span>
+            <span class="ray ray--b"></span>
+          </div>
           <div class="project-icon">🎮</div>
           <div class="project-header">
             <h3 class="project-name">Chef Simulation Game</h3>
@@ -1352,6 +1408,10 @@
         </div>
 
         <div class="project-card reveal">
+          <div class="card-rays" aria-hidden="true">
+            <span class="ray ray--a"></span>
+            <span class="ray ray--b"></span>
+          </div>
           <div class="project-icon">🦈</div>
           <div class="project-header">
             <h3 class="project-name">SharkTank.io — Hackathon Game</h3>
@@ -1374,6 +1434,10 @@
         </div>
 
         <div class="project-card reveal">
+          <div class="card-rays" aria-hidden="true">
+            <span class="ray ray--a"></span>
+            <span class="ray ray--b"></span>
+          </div>
           <div class="project-icon">🥤</div>
           <div class="project-header">
             <h3 class="project-name">3D Coke Interaction Experience</h3>

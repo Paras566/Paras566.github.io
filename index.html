@@ -941,6 +941,22 @@
       animation: rayDriftB 7s ease-in-out infinite -1s;
     }
 
+    /* Skills section uses the site's own sky-blue/green/white palette
+       instead of the purple/teal used elsewhere, so it reads as an
+       extension of the accent colors rather than a different theme. */
+    #skills .ray--1 {
+      background: linear-gradient(180deg, rgba(56,189,248,0.55) 0%, rgba(56,189,248,0.15) 55%, transparent 85%);
+    }
+    #skills .ray--2 {
+      background: linear-gradient(180deg, rgba(63,185,80,0.5) 0%, rgba(63,185,80,0.13) 55%, transparent 85%);
+    }
+    #skills .ray--3 {
+      background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 55%, transparent 85%);
+    }
+    #skills .ray--4 {
+      background: linear-gradient(180deg, rgba(56,189,248,0.5) 0%, rgba(56,189,248,0.14) 55%, transparent 85%);
+    }
+
     @keyframes rayDriftA {
       0%   { transform: translateX(0) scaleY(1); opacity: 0.5; }
       50%  { transform: translateX(22px) scaleY(1.06); opacity: 0.75; }

@@ -1367,7 +1367,11 @@
     }
     .form-btn:hover .form-btn__cover,
     .form-btn:focus-visible .form-btn__cover {
-      transform: rotate(-12deg);
+      /* The original component's -12deg was tuned for its compact
+         (~9em-wide) button - on our full-width button the same angle
+         around a near-left pivot sweeps the far edge much further in
+         absolute pixels, so it's scaled down to keep the peel contained. */
+      transform: rotate(-4deg);
       background: #79beff;
     }
 

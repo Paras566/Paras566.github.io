@@ -811,7 +811,83 @@
     .leet-text strong { color: var(--accent); }
 
     /* ── CONTACT ── */
-    #contact { background: var(--bg); }
+    #contact {
+      position: relative;
+      overflow: hidden;
+      background: #000000;
+    }
+
+    /* Animated aurora-style rays behind the contact content - blurred,
+       vertical bands of color that sway and pulse independently. Sits
+       behind .contact-inner (z-index 1) so the text/form stay legible;
+       the form card's own solid background hides the rays entirely where
+       it overlaps, so only the intro paragraph on the left ever sees them
+       directly. */
+    .contact-rays {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .ray {
+      position: absolute;
+      top: -15%;
+      height: 130%;
+      filter: blur(46px);
+      mix-blend-mode: screen;
+      will-change: transform, opacity;
+    }
+
+    .ray--1 {
+      left: 2%;
+      width: 110px;
+      background: linear-gradient(180deg, rgba(168,85,247,0.55) 0%, rgba(168,85,247,0.15) 55%, transparent 85%);
+      animation: rayDriftA 16s ease-in-out infinite;
+    }
+    .ray--2 {
+      left: 12%;
+      width: 160px;
+      background: linear-gradient(180deg, rgba(192,38,211,0.5) 0%, rgba(192,38,211,0.12) 55%, transparent 85%);
+      animation: rayDriftB 20s ease-in-out infinite -6s;
+    }
+    .ray--3 {
+      left: 62%;
+      width: 150px;
+      background: linear-gradient(180deg, rgba(45,212,191,0.5) 0%, rgba(45,212,191,0.14) 55%, transparent 85%);
+      animation: rayDriftA 18s ease-in-out infinite -9s;
+    }
+    .ray--4 {
+      left: 80%;
+      width: 120px;
+      background: linear-gradient(180deg, rgba(56,189,248,0.5) 0%, rgba(56,189,248,0.13) 55%, transparent 85%);
+      animation: rayDriftB 22s ease-in-out infinite -3s;
+    }
+
+    @keyframes rayDriftA {
+      0%   { transform: translateX(0) scaleY(1); opacity: 0.5; }
+      50%  { transform: translateX(22px) scaleY(1.06); opacity: 0.75; }
+      100% { transform: translateX(0) scaleY(1); opacity: 0.5; }
+    }
+    @keyframes rayDriftB {
+      0%   { transform: translateX(0) scaleY(1); opacity: 0.45; }
+      50%  { transform: translateX(-18px) scaleY(0.96); opacity: 0.68; }
+      100% { transform: translateX(0) scaleY(1); opacity: 0.45; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ray { animation: none; }
+    }
+
+    /* Raises all of #contact's text content (label, heading, inner grid)
+       above the absolutely-positioned rays layer, which would otherwise
+       paint on top of it despite z-index:0 since position:static content
+       always sits below positioned content. */
+    #contact .container {
+      position: relative;
+      z-index: 1;
+    }
 
     .contact-inner {
       margin-top: 2.5rem;
@@ -1372,6 +1448,12 @@
 
   <!-- CONTACT -->
   <section id="contact">
+    <div class="contact-rays" aria-hidden="true">
+      <span class="ray ray--1"></span>
+      <span class="ray ray--2"></span>
+      <span class="ray ray--3"></span>
+      <span class="ray ray--4"></span>
+    </div>
     <div class="container">
       <p class="section-label reveal">06 // contact</p>
       <h2 class="section-title reveal">Get In Touch</h2>

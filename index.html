@@ -1146,11 +1146,11 @@
         </div>
         <div class="about-stats reveal">
           <div class="stat-card">
-            <div class="stat-number">5+</div>
+            <div class="stat-number" data-count-to="5" data-suffix="+">0+</div>
             <div class="stat-label">Projects Shipped</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">100+</div>
+            <div class="stat-number" data-count-to="100" data-suffix="+">0+</div>
             <div class="stat-label">LeetCode Problems</div>
           </div>
           <div class="stat-card">
@@ -1158,7 +1158,7 @@
             <div class="stat-label">Univ. of Sussex</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">11+</div>
+            <div class="stat-number" data-count-to="11" data-suffix="+">0+</div>
             <div class="stat-label">Certifications</div>
           </div>
         </div>
@@ -1564,6 +1564,30 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Stats counter — count up from 0 the first time each stat scrolls
+    // into view.
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        statObserver.unobserve(el);
+
+        const target = parseFloat(el.dataset.countTo);
+        const suffix = el.dataset.suffix || '';
+        const duration = 1500;
+        const start = performance.now();
+
+        function tick(now) {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.stat-number[data-count-to]').forEach(el => statObserver.observe(el));
 
     // ── Contact form — Web3Forms
     document.getElementById('contact-form').addEventListener('submit', async function(e) {

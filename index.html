@@ -122,22 +122,11 @@
       background: #000000;
     }
 
-    #hero::before {
-      content: '';
-      position: absolute;
-      top: -200px; right: -200px;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    #hero::after {
-      content: '';
-      position: absolute;
-      bottom: -100px; left: -100px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(63,185,80,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
+    /* The original top-right/bottom-left accent glows are removed here -
+       against the hero's pure black background (needed so the character
+       frames blend seamlessly) they read as a visible off-black patch
+       instead of a subtle accent. The smoke wisps below now carry that
+       atmospheric role. */
 
     .hero-inner {
       position: relative;
@@ -248,6 +237,30 @@
       height: 260px;
       opacity: 0.5;
       animation: smokeDriftB 20s ease-in-out infinite -2s;
+    }
+    .smoke-wisp--7 {
+      left: -8%;
+      bottom: 74%;
+      width: 300px;
+      height: 300px;
+      opacity: 0.55;
+      animation: smokeDriftA 24s ease-in-out infinite -6s;
+    }
+    .smoke-wisp--8 {
+      left: 6%;
+      bottom: 90%;
+      width: 260px;
+      height: 260px;
+      opacity: 0.45;
+      animation: smokeDriftB 21s ease-in-out infinite -16s;
+    }
+    .smoke-wisp--9 {
+      left: -4%;
+      bottom: -2%;
+      width: 360px;
+      height: 360px;
+      opacity: 0.6;
+      animation: smokeDriftA 18s ease-in-out infinite -9s;
     }
 
     @keyframes smokeDriftA {
@@ -977,6 +990,9 @@
       <span class="smoke-wisp smoke-wisp--4"></span>
       <span class="smoke-wisp smoke-wisp--5"></span>
       <span class="smoke-wisp smoke-wisp--6"></span>
+      <span class="smoke-wisp smoke-wisp--7"></span>
+      <span class="smoke-wisp smoke-wisp--8"></span>
+      <span class="smoke-wisp smoke-wisp--9"></span>
     </div>
     <div class="hero-inner">
       <p class="hero-greeting">// hello, world — I'm</p>

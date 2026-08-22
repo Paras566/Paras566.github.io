@@ -372,11 +372,37 @@
       border: none;
     }
 
-    .btn-primary {
+    /* 3D "pushable" button - a layered box-shadow stands in for depth, and
+       pressing/hovering shrinks that shadow while translating the button
+       down by the same amount, so it reads as physically sinking toward
+       its own shadow rather than just moving. */
+    .btn-pop {
       background: var(--accent);
       color: #0d1117;
+      border: 2px solid #2a5f96;
+      border-radius: 10px;
+      box-shadow:
+        0 10px 0 -2px #a9d4ff,
+        0 10px 0 0 #2a5f96,
+        0 18px 14px -4px rgba(0, 0, 0, 0.55);
+      transition: all 150ms cubic-bezier(0, 0, 0.58, 1);
     }
-    .btn-primary:hover { background: #79beff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(88,166,255,0.25); }
+    .btn-pop:hover {
+      background: #79beff;
+      transform: translateY(4px);
+      box-shadow:
+        0 6px 0 -2px #a9d4ff,
+        0 6px 0 0 #2a5f96,
+        0 12px 10px -4px rgba(0, 0, 0, 0.55);
+    }
+    .btn-pop:active {
+      background: #79beff;
+      transform: translateY(10px);
+      box-shadow:
+        0 0 0 -2px #a9d4ff,
+        0 0 0 0 #2a5f96,
+        0 0 0 0 rgba(0, 0, 0, 0);
+    }
 
     .btn-outline {
       background: transparent;
@@ -1011,7 +1037,7 @@
         <span class="tag">Unity</span>
       </div>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#projects">View Projects</a>
+        <a class="btn btn-pop" href="#projects">View Projects</a>
         <a class="btn btn-outline" href="https://github.com/Paras566" target="_blank" rel="noopener">GitHub ↗</a>
         <a class="btn btn-outline" href="https://www.linkedin.com/in/parasmondela" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a class="btn btn-outline" href="mailto:parasmondela7@gmail.com">Email Me</a>

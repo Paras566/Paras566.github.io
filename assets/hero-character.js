@@ -22,10 +22,17 @@
 
   const EASE_PER_SEC = 6;
   const RESPONSE_CURVE = 0.7;
-  // Full turn is reached once the cursor is this many pixels away from his
-  // face - a fixed distance, not a fraction of the viewport, so the effect
-  // feels the same regardless of screen size.
-  const RANGE_PX = 420;
+  // Full leftward turn is reached once the cursor is this many pixels to the
+  // left of his face - a fixed distance, not a fraction of the viewport, so
+  // the effect feels the same regardless of screen size.
+  const RANGE_X = 420;
+  // Fraction of the space between his face and the top of the viewport that
+  // maps to full upward tilt. His face sits fairly high up, so there isn't
+  // much room above it - using a fraction of that actual space (instead of
+  // a large fixed distance) means "up" is reachable instead of capping out
+  // at a fraction of the pose before the cursor hits the top of the window.
+  const UP_RANGE_FACTOR = 0.8;
+  const UP_RANGE_MIN = 90;
 
   const pad5 = (n) => String(n).padStart(5, '0');
   const frameSrc = (n) => `${FRAME_DIR}/frame_${pad5(n)}.png`;
@@ -66,7 +73,6 @@
   let currentV = 0;
   let targetH = 0;
   let targetV = 0;
-  let mirrored = false;
   let lastFrame = FRAME_NEUTRAL;
   let lastTime = null;
 
@@ -93,10 +99,20 @@
       return;
     }
     const anchor = getAnchor();
-    const nx = (rawX - anchor.x) / RANGE_PX;
-    const ny = (anchor.y - rawY) / RANGE_PX;
-    targetH = shapeResponse(Math.max(-1, Math.min(1, nx)));
-    targetV = shapeResponse(Math.max(0, Math.min(1, ny)));
+
+    // Only turn for a cursor to the left - there's no captured "look right"
+    // pose, only a mirrored flip of the left one, and the shoulders/turn
+    // flipping over reads as an unwanted jump rather than a natural look.
+    // A cursor to the right just keeps him facing forward.
+    const dx = rawX - anchor.x;
+    const nx = dx < 0 ? Math.max(-1, dx / RANGE_X) : 0;
+
+    const upRangePx = Math.max(UP_RANGE_MIN, anchor.y * UP_RANGE_FACTOR);
+    const dy = anchor.y - rawY;
+    const ny = dy > 0 ? Math.min(1, dy / upRangePx) : 0;
+
+    targetH = shapeResponse(nx);
+    targetV = shapeResponse(ny);
   }
 
   function frameForPose(h, v) {
@@ -111,17 +127,10 @@
   function render() {
     const frame = frameForPose(currentH, currentV);
 
-    if (currentH > 0.015) mirrored = true;
-    else if (currentH < -0.015) mirrored = false;
-
     if (frame !== lastFrame && allLoaded) {
       heroImg.src = imageCache[frame].src;
       lastFrame = frame;
     }
-
-    heroImg.style.transform = mirrored
-      ? 'translateX(-50%) scaleX(-1)'
-      : 'translateX(-50%)';
   }
 
   function tick(now) {

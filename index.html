@@ -1068,6 +1068,42 @@
       height: 100%;
       display: block;
     }
+
+    /* Phone icon - wiggles and pulses a ring outward, replaying every time
+       the whole card is hovered (not just the icon itself). */
+    .phone-icon__glyph,
+    .phone-icon__pulse {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .phone-icon__pulse {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    .contact-link:hover .phone-icon__glyph {
+      animation: phoneWiggle 0.9s ease-in-out;
+    }
+    .contact-link:hover .phone-icon__pulse {
+      animation: phonePulse 0.9s ease-out;
+    }
+    @keyframes phoneWiggle {
+      0%   { transform: rotate(0deg); }
+      20%  { transform: rotate(-8deg); }
+      40%  { transform: rotate(8deg); }
+      60%  { transform: rotate(-6deg); }
+      80%  { transform: rotate(6deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes phonePulse {
+      0%   { opacity: 0;    transform: scale(0.3); }
+      50%  { opacity: 0.25; transform: scale(0.95); }
+      100% { opacity: 0;    transform: scale(1.5); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .contact-link:hover .phone-icon__glyph,
+      .contact-link:hover .phone-icon__pulse { animation: none; }
+    }
+
     .contact-link-label { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
     .contact-link-value { font-size: 0.9rem; color: var(--text); }
 
@@ -1666,7 +1702,12 @@
               </div>
             </a>
             <a class="contact-link" href="tel:+447407395870">
-              <span class="contact-link-icon">📱</span>
+              <span class="contact-link-icon phone-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle class="phone-icon__pulse" cx="12" cy="12" r="10" fill="none" />
+                  <path class="phone-icon__glyph" d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" />
+                </svg>
+              </span>
               <div>
                 <div class="contact-link-label">phone</div>
                 <div class="contact-link-value">+44 7407 395870</div>

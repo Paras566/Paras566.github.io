@@ -700,6 +700,34 @@
       background: linear-gradient(180deg, rgba(45,212,191,0.5) 0%, rgba(45,212,191,0.14) 55%, transparent 85%);
       animation: rayDriftB 6s ease-in-out infinite -2s;
     }
+
+    /* Starfield layer - sits above the rays glow, below the card content.
+       Stars are generated per-card by JS (randomized position/size/timing)
+       and the whole layer drifts slightly toward the cursor for a subtle
+       parallax feel. */
+    .project-card > .card-stars {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .card-stars .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: starTwinkle ease-in-out infinite;
+    }
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .card-stars .star { animation: none; opacity: 0.6; }
+      .project-card > .card-stars { transition: none; }
+    }
+
     .project-card::before {
       content: '';
       position: absolute;
@@ -1529,6 +1557,7 @@
             <span class="ray ray--a"></span>
             <span class="ray ray--b"></span>
           </div>
+          <div class="card-stars" aria-hidden="true"></div>
           <div class="project-icon">💳</div>
           <div class="project-header">
             <h3 class="project-name">Online Payment Service</h3>
@@ -1556,6 +1585,7 @@
             <span class="ray ray--a"></span>
             <span class="ray ray--b"></span>
           </div>
+          <div class="card-stars" aria-hidden="true"></div>
           <div class="project-icon">🌱</div>
           <div class="project-header">
             <h3 class="project-name">Carbon Floor App</h3>
@@ -1582,6 +1612,7 @@
             <span class="ray ray--a"></span>
             <span class="ray ray--b"></span>
           </div>
+          <div class="card-stars" aria-hidden="true"></div>
           <div class="project-icon">🎮</div>
           <div class="project-header">
             <h3 class="project-name">Chef Simulation Game</h3>
@@ -1609,6 +1640,7 @@
             <span class="ray ray--a"></span>
             <span class="ray ray--b"></span>
           </div>
+          <div class="card-stars" aria-hidden="true"></div>
           <div class="project-icon">🦈</div>
           <div class="project-header">
             <h3 class="project-name">SharkTank.io — Hackathon Game</h3>
@@ -1635,6 +1667,7 @@
             <span class="ray ray--a"></span>
             <span class="ray ray--b"></span>
           </div>
+          <div class="card-stars" aria-hidden="true"></div>
           <div class="project-icon">🥤</div>
           <div class="project-header">
             <h3 class="project-name">3D Coke Interaction Experience</h3>
@@ -1914,6 +1947,38 @@
       });
     }, { threshold: 0.4 });
     document.querySelectorAll('.stat-number[data-count-to]').forEach(el => statObserver.observe(el));
+
+    // ── Project card starfields — random twinkling dots per card, with a
+    // subtle pointer-parallax drift while hovered.
+    document.querySelectorAll('.project-card').forEach((card) => {
+      const layer = card.querySelector('.card-stars');
+      if (!layer) return;
+
+      const STAR_COUNT = 22;
+      for (let i = 0; i < STAR_COUNT; i++) {
+        const star = document.createElement('span');
+        star.className = 'star';
+        const size = (Math.random() * 1.6 + 0.6).toFixed(2); // 0.6-2.2px
+        star.style.left = `${(Math.random() * 100).toFixed(1)}%`;
+        star.style.top = `${(Math.random() * 100).toFixed(1)}%`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.animationDuration = `${(Math.random() * 2.5 + 1.5).toFixed(2)}s`;
+        star.style.animationDelay = `${(Math.random() * 4).toFixed(2)}s`;
+        layer.appendChild(star);
+      }
+
+      const PARALLAX_PX = 6;
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - 0.5;
+        const ny = (e.clientY - rect.top) / rect.height - 0.5;
+        layer.style.transform = `translate(${(-nx * PARALLAX_PX).toFixed(2)}px, ${(-ny * PARALLAX_PX).toFixed(2)}px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        layer.style.transform = 'translate(0, 0)';
+      });
+    });
 
     // ── Stagger text — About paragraphs reveal word by word the first
     // time they scroll into view.

@@ -538,6 +538,23 @@
 
     .about-text p { color: var(--text); margin-bottom: 1rem; }
 
+    /* Stagger reveal - each word fades/slides in individually, in sequence,
+       the first time the About text scrolls into view (JS assigns each
+       .stagger-word its own transition-delay). */
+    .about-text .stagger-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.35em);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .about-text.visible .stagger-word {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .about-text .stagger-word { transition: none; opacity: 1; transform: none; }
+    }
+
     .about-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1252,7 +1269,7 @@
       <p class="section-label reveal">01 // about me</p>
       <h2 class="section-title reveal">Who I Am</h2>
       <div class="about-grid">
-        <div class="about-text reveal">
+        <div class="about-text">
           <p>
             I'm a software developer with a Master's in Advanced Computer Science from the University of Sussex. My background spans full-stack web development, data analysis, and 3D game development — giving me a broad technical toolkit I can apply across domains.
           </p>
@@ -1739,6 +1756,37 @@
       });
     }, { threshold: 0.4 });
     document.querySelectorAll('.stat-number[data-count-to]').forEach(el => statObserver.observe(el));
+
+    // ── Stagger text — About paragraphs reveal word by word the first
+    // time they scroll into view.
+    (function () {
+      const container = document.querySelector('.about-text');
+      if (!container) return;
+      const STEP = 0.018; // seconds between each word's delay
+      let i = 0;
+      container.querySelectorAll('p').forEach((p) => {
+        const words = p.textContent.trim().split(/\s+/);
+        p.textContent = '';
+        words.forEach((word, idx) => {
+          const span = document.createElement('span');
+          span.className = 'stagger-word';
+          span.textContent = word;
+          span.style.transitionDelay = `${(i * STEP).toFixed(3)}s`;
+          i++;
+          p.appendChild(span);
+          if (idx < words.length - 1) p.appendChild(document.createTextNode(' '));
+        });
+      });
+
+      const staggerObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          staggerObserver.unobserve(entry.target);
+          entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.15 });
+      staggerObserver.observe(container);
+    })();
 
     // ── Contact form — Web3Forms
     document.getElementById('contact-form').addEventListener('submit', async function(e) {
